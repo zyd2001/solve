@@ -58,7 +58,9 @@ int main()
             printf("The second root of the function x2 = %lf\n", answer->x2);            
         }
         free(variables);
+        variables = NULL;
         free(answer);
+        answer = NULL;
     }
     return 0;
 }
@@ -74,7 +76,11 @@ struct var *parse()
     {
         ch = getchar();
         if (ch == EOF)
+        {
+            free(new);
+            string_buffer = utf8_string_delete(string_buffer);    
             exit(0);
+        }
         else if (ch == ' ')
             continue;
         else if (ch == '\n')
@@ -83,7 +89,11 @@ struct var *parse()
             break;
         }
         else if (ch == 'e' || ch == 'q')
+        {
+            free(new);
+            string_buffer = utf8_string_delete(string_buffer);    
             exit(0);
+        }
         else
         {
             if (ch >= '0' && ch <= '9' || ch == '.')
@@ -114,6 +124,7 @@ struct var *parse()
             }
         }
     }
+    string_buffer = utf8_string_delete(string_buffer);
     return new;
 }
 
