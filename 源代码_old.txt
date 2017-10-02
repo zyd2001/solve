@@ -1,0 +1,256 @@
+/*请复制到c编辑器中查看，更清晰*/
+
+文件1
+head.h
+#include<stdio.h>
+#include<math.h>
+#include<stdlib.h>
+#include<string.h>
+#include<io.h>
+#define Cl system("cls")
+#define Pa system("pause")
+#define P printf
+#define S scanf
+#include<stdio.h>/*某个stdio.h*/
+
+int i, a;
+char input[1024];//输入的字符串
+char integer[1024];//获取整数的字符串
+
+int return_UI;
+int get_string();
+int check();
+int UI();
+int solve(int c, int b, int a);
+
+
+文件2
+main.c
+#include"head.h"
+
+int main()
+{	
+begin:
+	return_UI=UI();//打开ui界面并获取返回值
+	//printf("%d\n%c", return_UI, return_UI);
+	switch (return_UI)//判断选项
+	{
+	case 1:
+		if (get_string()==0)
+			break;
+		else
+			goto begin;
+	case 2:
+		system("源代码.txt");
+	default:
+		break;
+	}
+	return 0;
+}
+
+文件3
+get_string.c
+#include"head.h"
+
+int get_string()
+{
+	char ch = 0;
+	static int sum = 0, sum_x = 0, sum_x2 = 0;
+	int flag = 1, flag_2 = 1;
+start:
+	Cl;
+	printf("请输入方程\n");
+	rewind(stdin);
+	scanf("%s", input);//获取输入的方程
+					   //printf("%s\n", input);
+	int j = strlen(input);
+	for (i = 0;i <= j;i++)//检测是否有不合法字符
+	{
+		if (!(input[i] >= '0'&&input[i] <= '9'))
+		{
+			if (input[i] != '+'&&input[i] != '-'&&input[i] != '='&&input[i] != 'x'\
+&&input[i] != '^'&&input[i] != 0 && input[i] != '/')
+			{
+				printf("方程中含有不合法字符！\n");
+				printf("按e退出，其余任意键重新输入\n");
+				rewind(stdin);
+				scanf("%c", &ch);
+				if (ch== 'e')
+					exit(0);
+				else
+					goto start;
+			}
+		}
+	}
+	for (i = 0, a = 0;i <= j;)
+	{
+		if (input[i] != '+'&&input[i] != '-'&&input[i] != '='&&input[i] != '\0'&&input[i] != 'x')
+		{
+			integer[a] = input[i];//获取输入的整数
+			i++;
+			a++;
+		}
+		else if (input[i] == '+')//检测到加号
+		{
+			sum += flag*flag_2*atoi(integer);
+			//printf("%d\n", sum);
+			a = 0;
+			i++;
+			flag = 1;
+			memset(integer, 0, strlen(integer));
+			//printf("%s\n", integer);
+			continue;
+		}
+		else if (input[i] == '-')//检测到减号
+		{
+			//printf("%s\n", integer);
+			sum += flag*flag_2*atoi(integer);
+			//printf("%d\n", sum);
+			a = 0;
+			i++;
+			flag = -1;
+			memset(integer, 0, strlen(integer));
+			//printf("%s\n", integer);
+			continue;
+		}
+		else if (input[i] == 'x')//检测到x
+		{
+			i++;
+			if (input[i] != '^')//检测x是否有幂
+			{
+				if (integer[0] == '\0')
+					sum_x = 1;
+				else
+					sum_x += flag*flag_2*atoi(integer);
+				a = 0;
+				flag = 0;
+				memset(integer, 0, strlen(integer));
+				//printf("%d", sum_x);
+				continue;
+			}
+			else if (input[i] == '^')//检测到x有幂
+			{
+				if (integer[0] == '\0')
+					sum_x2 = 1;
+				else
+					sum_x2 += flag*flag_2*atoi(integer);
+				a = 0;
+				flag = 0;
+				memset(integer, 0, strlen(integer));
+				i += 2;
+				//printf("%d",sum_x2);
+				continue;
+			}
+		}
+		else if (input[i] == '=')
+		{
+			sum += flag*atoi(integer);
+			//printf("%d\n", sum);
+			a = 0;
+			i++;
+			flag = 1;
+			flag_2 = -1;
+			memset(integer, 0, strlen(integer));
+			//printf("%s\n", integer);
+			continue;
+		}
+		else if (input[i] == '\0')//检测到结尾
+		{
+			//printf("%s\n", integer); 
+			sum += flag*flag_2*atoi(integer);
+			//printf("%d\n", sum);
+			a = 0;
+			i++;
+			flag = 0;
+			memset(integer, 0, strlen(integer));
+			//printf("%s\n", integer);
+			continue;
+		}
+		//integer[i] = '\0';
+	}
+	//printf("%d\n", sum_x);
+	//printf("%d\n", sum_x2);
+	//printf("%d\n", sum);
+	//Pa;
+	//end:
+	return solve(sum, sum_x, sum_x2);
+}
+
+文件4
+function.c
+#include "head.h"
+
+int solve(int c,int b,int a)
+{
+	char choose;
+	int abc;
+	double x1 = 0, x2 = 0;
+	abc = b*b - 4 * a*c;
+	if (b >= 0)
+	{
+		x1 = (-b + sqrt(abc)) / (2 * a);
+		x2 = (-b - sqrt(abc)) / (2 * a);
+		printf("方程的根为：x1=%.8lf\n            x2=%.8lf\n", x1, x2);
+		printf("退出？Y/N\n");
+		rewind(stdin);
+		scanf("%c", &choose);
+		switch (choose)
+		{
+		case 'y':
+			return 0;
+		case 'n':
+			return 1;
+		default:
+			return 0;
+		}
+	}
+	else
+	{
+		printf("方程无解（实数根）\n");
+		printf("退出？Y/N\n");
+		rewind(stdin);
+		scanf("%c", &choose);
+		switch (choose)
+		{
+		case 'y':
+			return 0;
+		case 'n':
+			return 1;
+		default:
+			return 0;
+		}
+	}
+}
+
+int UI()
+{
+	char num;
+	system("cls");
+	printf("******************************\n");
+	printf("*	 欢迎使用此程序      *\n");
+	printf("*      此程序为测试版0.2     *\n");
+	printf("*     此程序无法处理分数     *\n");
+	printf("*    修复了一个重大bug！！   *\n");
+	printf("*       进入程序——1        *\n");
+	printf("*      查看源代码——2       *\n");
+	printf("*	   退出——0         *\n");
+	printf("*		    by 张逸达*\n");
+	printf("******************************\n");
+	printf("x二次方:x^或x^2(英文状态shift+6）");
+	printf("您的选项：");
+	rewind(stdin);
+	scanf("%c", &num);
+	switch (num)
+	{
+	case '1':
+		return 1;
+		break;
+	case '2':
+		return 2;
+		break;
+	case '0':
+		exit(0);
+	}
+}
+
+int check();//还没有做
