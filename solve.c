@@ -2,9 +2,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "utility.h"
+#include "UTF8.h"
 
-enum state_tag {
+enum state_tag 
+{
     NUMBER,
     X,
     POWER,
@@ -15,13 +16,15 @@ enum state_tag {
     NUL
 };
 
-struct var {
+struct var 
+{
     double x1;
     double x2;
     double constant;
 };
 
-struct ans {
+struct ans 
+{
     double x1;
     double x2;
     int flag;
@@ -78,7 +81,7 @@ struct var *parse()
         if (ch == EOF)
         {
             free(new);
-            string_buffer = utf8_string_delete(string_buffer);    
+            string_buffer = utf8_string_delete(&string_buffer);    
             exit(0);
         }
         else if (ch == ' ')
@@ -91,7 +94,7 @@ struct var *parse()
         else if (ch == 'e' || ch == 'q')
         {
             free(new);
-            string_buffer = utf8_string_delete(string_buffer);    
+            string_buffer = utf8_string_delete(&string_buffer);    
             exit(0);
         }
         else
@@ -124,7 +127,7 @@ struct var *parse()
             }
         }
     }
-    string_buffer = utf8_string_delete(string_buffer);
+    string_buffer = utf8_string_delete(&string_buffer);
     return new;
 }
 
@@ -174,22 +177,22 @@ int state_change(enum state_tag *current, enum state_tag new, UTF8_String *strin
             switch (*current)
             {
                 case NUMBER:
-                    variables->constant += eval(string_buffer->value) * flag * f;
+                    variables->constant += eval(utf8_string_get_value(string_buffer)) * flag * f;
                     utf8_string_reassign(string_buffer, "");
                     break;
                 case X:
-                    if (strlen(string_buffer->value))
+                    if (strlen(utf8_string_get_value(string_buffer)))
                     {
-                        variables->x1 += eval(string_buffer->value) * flag * f;
+                        variables->x1 += eval(utf8_string_get_value(string_buffer)) * flag * f;
                         utf8_string_reassign(string_buffer, "");
                     }
                     else
                         variables->x1 += 1 * flag * f;
                     break;
                 case POWER:
-                    if (strlen(string_buffer->value))
+                    if (strlen(utf8_string_get_value(string_buffer)))
                     {
-                        variables->x2 += eval(string_buffer->value) * flag * f;
+                        variables->x2 += eval(utf8_string_get_value(string_buffer)) * flag * f;
                         utf8_string_reassign(string_buffer, "");
                     }
                     else
